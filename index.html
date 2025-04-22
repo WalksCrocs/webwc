@@ -17,6 +17,25 @@
       background-size: 600px;
       background-attachment: fixed;
     }
+    #splash {
+      position: fixed;
+      background: white;
+      z-index: 9999;
+      width: 100%;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+    }
+    #splash img {
+      width: 150px;
+      margin-bottom: 20px;
+    }
+    #splash h1 {
+      font-family: 'Rubik Mono One', sans-serif;
+      color: #84BD00;
+    }
     header {
       background-color: #84BD00;
       text-align: center;
@@ -178,6 +197,10 @@
   </style>
 </head>
 <body>
+  <div id="splash">
+    <img src="logo.png" alt="WalksCrocs Logo">
+    <h1>WalksCrocs</h1>
+  </div>
   <header>
     <img src="logo.png" alt="WalksCrocs Logo">
   </header>
@@ -195,6 +218,17 @@
     <ul id="cartItems"></ul>
     <button class="checkout-btn" onclick="checkoutCart()">Bayar Sekarang</button>
   </div>
+
+  <script>
+    window.addEventListener("load", () => {
+      setTimeout(() => {
+        const splash = document.getElementById("splash");
+        splash.style.opacity = 0;
+        splash.style.transition = "opacity 0.8s ease";
+        setTimeout(() => splash.style.display = "none", 800);
+      }, 1500);
+    });
+  </script>
 
   <script>
     const classicColors = ["Black", "White", "Bone", "Grey", "Army", "Navy", "Frost Blue", "Magenta", "Lilac", "Tosca", "Pink Milk"];

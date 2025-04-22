@@ -211,6 +211,12 @@
 
     <div class="section-title">Classic Crush Series</div>
     <div class="product-grid" id="crushGrid"></div>
+
+    <div class="section-title">Mega Crush Series</div>
+    <div class="product-grid" id="megaGrid"></div>
+
+    <div class="section-title">Geometric Crush Series</div>
+    <div class="product-grid" id="geoGrid"></div>
   </div>
 
   <div class="cart">
@@ -228,9 +234,7 @@
         setTimeout(() => splash.style.display = "none", 800);
       }, 1500);
     });
-  </script>
 
-  <script>
     const classicColors = ["Black", "White", "Bone", "Grey", "Army", "Navy", "Frost Blue", "Magenta", "Lilac", "Tosca", "Pink Milk"];
     const classicSizes = {
       common: ["M4W6", "M5W7", "M6W8", "M7W9"],
@@ -238,10 +242,14 @@
     };
     const crushColors = ["Black", "White", "Bone", "Multi", "Magenta", "Latte"];
     const crushSizes = ["M4W6", "M5W7", "M6W8", "M7W9"];
+    const megaColors = ["Black", "White", "Bone", "Shitake", "Magenta", "Galaxy"];
+    const geoColors = ["Black", "White", "Lava"];
+
 
     const cart = [];
     const classicGrid = document.getElementById('classicGrid');
     const crushGrid = document.getElementById('crushGrid');
+    const megaGrid = document.getElementById('megaGrid');
     const cartItems = document.getElementById('cartItems');
 
     function addToCart(series, color, size) {
@@ -300,6 +308,16 @@
     crushColors.forEach(color => {
       const card = createProductCard("Classic Crush", color, crushSizes, 549000, "cc");
       crushGrid.appendChild(card);
+    });
+
+    megaColors.forEach(color => {
+      const card = createProductCard("Mega Crush", color, crushSizes, 599000, "mc");
+      megaGrid.appendChild(card);
+    });
+
+    geoColors.forEach(color => {
+      const card = createProductCard("Geometric", color, classicSizes.extended, 449000, "g");
+      geoGrid.appendChild(card);
     });
   </script>
 </body>

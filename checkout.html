@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>WalksCrocs - Checkout</title>
+  <link href="https://fonts.googleapis.com/css2?family=Rubik+Mono+One&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: #f0fdf4;
+      margin: 0;
+      padding: 1rem;
+      animation: fadeIn 0.7s ease-in-out;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+    header img {
+      height: 40px;
+      width: 40px;
+      object-fit: contain;
+    }
+    h1 {
+      font-family: 'Rubik Mono One', sans-serif;
+      color: #84BD00;
+      margin: 0;
+    }
+    .cart-item {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      background: white;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      margin: 1rem auto;
+      padding: 1rem;
+      max-width: 800px;
+      transition: transform 0.3s ease;
+    }
+    .cart-item:hover {
+      transform: scale(1.01);
+    }
+    .cart-item img {
+      width: 120px;
+      height: 120px;
+      object-fit: cover;
+      border-radius: 8px;
+    }
+    .cart-details {
+      flex-grow: 1;
+    }
+    .cart-details h3 {
+      margin: 0 0 0.5rem;
+      color: #333;
+    }
+    .cart-details p {
+      margin: 0.2rem 0;
+      color: #666;
+    }
+    .remove-btn {
+      background-color: #ff4d4f;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      padding: 0.5rem 0.8rem;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    .checkout-btn {
+      display: block;
+      margin: 2rem auto;
+      background-color: #84BD00;
+      color: white;
+      padding: 1rem 2rem;
+      border: none;
+      border-radius: 10px;
+      font-size: 1.2rem;
+      font-family: 'Rubik Mono One', sans-serif;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+    .checkout-btn:hover {
+      background-color: #6aa300;
+    }
+    .empty {
+      text-align: center;
+      color: #888;
+      margin-top: 2rem;
+      font-size: 1.2rem;
+    }
+
+    /* Mobile Responsive */
+    @media (max-width: 600px) {
+      .cart-item {
+        flex-direction: column;
+        text-align: center;
+      }
+      .cart-item img {
+        width: 100%;
+        max-width: 100%;
+        height: auto;
+        aspect-ratio: 1/1;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <img src="logo.png" alt="WalksCrocs Logo" />
+    <h1>WalksCrocs</h1>
+  </header>
+
+  <div id="cartContainer"></div>
+  <button id="checkoutBtn" class="checkout-btn">Bayar Sekarang</button>
+
+  <script>
+    const cartContainer = document.getElementById("cartContainer");
+    const checkoutBtn = document.getElementById("checkoutBtn");
+
+    function renderCart() {
+      const cart = JSON.parse(localStorage.getItem("cart")) || [];
+      cartContainer.innerHTML = "";
+
+      if (cart.length === 0) {
+        cartContainer.innerHTML = "<p class='empty'>Keranjang Anda masih kosong.</p>";
+        checkoutBtn.textContent = "Belanja Sekarang";
+        checkoutBtn.onclick = () => {
+          window.location.href = "index.html";
+        };
+        return;
+      }
+
+      cart.forEach((item, index) => {
+        const imgPrefix = {
+          "Classic": "c",
+          "Classic Crush": "cc",
+          "Mega Crush": "mc",
+          "Geometric": "g",
+          "Classic Platform": "p"
+        }[item.series] || "c";
+        const imgFile = `${imgPrefix} ${item.color}.png`;
+
+        const div = document.createElement("div");
+        div.className = "cart-item";
+        div.innerHTML = `
+          <img src="${imgFile}" alt="${item.series} ${item.color}">
+          <div class="cart-details">
+            <h3>${item.series} - ${item.color}</h3>
+            <p>Ukuran: ${item.size}</p>
+          </div>
+          <button class="remove-btn" onclick="removeItem(${index})">Hapus</button>
+        `;
+        cartContainer.appendChild(div);
+      });
+
+      checkoutBtn.textContent = "Bayar Sekarang";
+      checkoutBtn.onclick = () => {
+        alert("Terima kasih! Checkout berhasil.");
+        localStorage.removeItem("cart");
+        renderCart();
+      };
+    }
+
+    function removeItem(index) {
+      const cart = JSON.parse(localStorage.getItem("cart")) || [];
+      cart.splice(index, 1);
+      localStorage.setItem("cart", JSON.stringify(cart));
+      renderCart();
+    }
+
+    renderCart();
+  </script>
+</body>
+</html>

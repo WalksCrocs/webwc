@@ -2,15 +2,15 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>WalksCrocs Store</title>
   <link href="https://fonts.googleapis.com/css2?family=Rubik+Mono+One&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
   <style>
     body {
       margin: 0;
       font-family: 'Poppins', sans-serif;
       background-color: #FFFFFF;
-      color: #333;
       background-image: url('logo.png');
       background-repeat: no-repeat;
       background-position: center;
@@ -29,7 +29,7 @@
       flex-direction: column;
     }
     #splash img {
-      width: 250px;
+      width: 150px;
       margin-bottom: 20px;
     }
     #splash h1 {
@@ -121,52 +121,31 @@
       font-size: 1rem;
       font-family: 'Rubik Mono One', sans-serif;
     }
-    .cart {
+    #cartToggle {
       position: fixed;
-      top: 1rem;
-      right: 1rem;
-      background: #FFFFFF;
+      bottom: 20px;
+      right: 20px;
+      background: white;
       border: 2px solid #84BD00;
-      padding: 1rem;
-      border-radius: 10px;
-      max-width: 300px;
-      z-index: 999;
-    }
-    .cart h4 {
-      margin-top: 0;
       color: #84BD00;
+      font-size: 1.2rem;
+      border-radius: 50%;
+      padding: 0.6rem 0.75rem;
+      cursor: pointer;
+      z-index: 1001;
     }
-    .cart ul {
-      list-style: none;
-      padding: 0;
-    }
-    .cart li {
-      margin-bottom: 0.5rem;
-    }
-    .cart .checkout-btn {
-      margin-top: 1rem;
-      display: block;
-      width: 100%;
+    .notification {
+      position: fixed;
+      bottom: 100px;
+      right: 20px;
       background-color: #84BD00;
       color: white;
-      border: none;
-      padding: 0.6rem;
-      border-radius: 8px;
-      text-align: center;
-      text-decoration: none;
-      font-size: 1rem;
-      font-family: 'Rubik Mono One', sans-serif;
-      cursor: pointer;
-    }
-    .remove-btn {
-      background: red;
-      color: white;
-      border: none;
-      padding: 0.2rem 0.5rem;
-      border-radius: 4px;
-      cursor: pointer;
-      font-size: 0.8rem;
-      margin-left: 0.5rem;
+      padding: 0.8rem 1rem;
+      border-radius: 10px;
+      font-weight: bold;
+      display: none;
+      z-index: 1002;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.15);
     }
     @media (max-width: 768px) {
       header img {
@@ -187,11 +166,6 @@
       .product select, .product button.cart-btn, .product a.buy-btn {
         font-size: 0.9rem;
         padding: 0.5rem;
-      }
-      .cart {
-        position: static;
-        margin-top: 2rem;
-        width: 100%;
       }
     }
   </style>
@@ -217,13 +191,16 @@
 
     <div class="section-title">Geometric Series</div>
     <div class="product-grid" id="geoGrid"></div>
+
+    <div class="section-title">Classic Platform Series</div>
+    <div class="product-grid" id="platformGrid"></div>
   </div>
 
-  <div class="cart">
-    <h4>Keranjang Belanja</h4>
-    <ul id="cartItems"></ul>
-    <button class="checkout-btn" onclick="checkoutCart()">Bayar Sekarang</button>
+  <div id="cartToggle" onclick="window.location.href='checkout.html'">
+    <i class="fas fa-shopping-cart"></i>
   </div>
+
+  <div class="notification" id="notification">Produk berhasil ditambahkan</div>
 
   <script>
     window.addEventListener("load", () => {
@@ -235,52 +212,23 @@
       }, 1500);
     });
 
-    const classicColors = ["Black", "White", "Bone", "Grey", "Army", "Navy", "Frost Blue", "Magenta", "Lilac", "Tosca", "Pink Milk"];
-    const classicSizes = {
-      common: ["M4W6", "M5W7", "M6W8", "M7W9"],
-      extended: ["M4W6", "M5W7", "M6W8", "M7W9", "M8W10", "M9W11", "M10W12", "M11"]
-    };
-    const crushColors = ["Black", "White", "Bone", "Multi", "Magenta", "Latte"];
-    const crushSizes = ["M4W6", "M5W7", "M6W8", "M7W9"];
-    const megaColors = ["Black", "White", "Bone", "Shitake", "Magenta", "Galaxy"];
-    const geoColors = ["Black", "White", "Lava"];
+    function showNotification() {
+      const notif = document.getElementById("notification");
+      notif.style.display = "block";
+      setTimeout(() => {
+        notif.style.display = "none";
+      }, 2000);
+    }
 
-
-    const cart = [];
     const classicGrid = document.getElementById('classicGrid');
     const crushGrid = document.getElementById('crushGrid');
     const megaGrid = document.getElementById('megaGrid');
-    const cartItems = document.getElementById('cartItems');
-
-    function addToCart(series, color, size) {
-      cart.push({ series, color, size });
-      renderCart();
-    }
-
-    function removeFromCart(index) {
-      cart.splice(index, 1);
-      renderCart();
-    }
-
-    function renderCart() {
-      cartItems.innerHTML = cart.map((item, index) => `
-        <li>
-          ${item.series} - ${item.color} - Size: ${item.size}
-          <button class="remove-btn" onclick="removeFromCart(${index})">Hapus</button>
-        </li>
-      `).join('');
-    }
-
-    function checkoutCart() {
-      const message = cart.map(item => `• ${item.series} - ${item.color} - Size: ${item.size}`).join('%0A');
-      const url = `https://wa.me/6285171002907?text=Halo%20saya%20ingin%20memesan:%0A${message}`;
-      window.open(url, '_blank');
-    }
+    const platformGrid = document.getElementById('platformGrid');
+    const geoGrid = document.getElementById('geoGrid');
 
     function createProductCard(series, color, sizes, price, prefix) {
       const card = document.createElement('div');
       card.className = 'product';
-
       const imageName = `${prefix} ${color}.png`;
 
       card.innerHTML = `
@@ -295,9 +243,28 @@
           <a class="buy-btn" target="_blank" href="https://wa.me/6285171002907?text=Saya%20ingin%20beli%20${encodeURIComponent(series)}%20${encodeURIComponent(color)}">Beli Sekarang</a>
         </div>
       `;
-
       return card;
     }
+
+    function addToCart(series, color, size) {
+      const product = { series, color, size };
+      const cartData = JSON.parse(localStorage.getItem('cart')) || [];
+      cartData.push(product);
+      localStorage.setItem('cart', JSON.stringify(cartData));
+      showNotification();
+    }
+
+    const classicColors = ["Black", "White", "Bone", "Grey", "Army", "Navy", "Frost Blue", "Magenta", "Lilac", "Tosca", "Pink Milk"];
+    const classicSizes = {
+      common: ["M4W6", "M5W7", "M6W8", "M7W9"],
+      extended: ["M4W6", "M5W7", "M6W8", "M7W9", "M8W10", "M9W11", "M10W12", "M11"]
+    };
+    const crushColors = ["Black", "White", "Bone", "Multi", "Magenta", "Latte"];
+    const crushSizes = ["M4W6", "M5W7", "M6W8", "M7W9"];
+    const megaColors = ["Black", "White", "Bone", "Shitake", "Magenta", "Galaxy"];
+    const geoColors = ["Black", "White", "Lava"];
+    const platformColors = ["Black", "White", "Bone", "Mauve Mist"];
+    const platformSizes = ["M4W6", "M5W7", "M6W8", "M7W9"];
 
     classicColors.forEach(color => {
       const sizes = ["Frost Blue", "Magenta", "Lilac", "Tosca", "Pink Milk"].includes(color) ? classicSizes.common : classicSizes.extended;
@@ -318,6 +285,11 @@
     geoColors.forEach(color => {
       const card = createProductCard("Geometric", color, classicSizes.extended, 449000, "g");
       geoGrid.appendChild(card);
+    });
+
+    platformColors.forEach(color => {
+      const card = createProductCard("Classic Platform", color, platformSizes, 549000, "p");
+      platformGrid.appendChild(card);
     });
   </script>
 </body>
